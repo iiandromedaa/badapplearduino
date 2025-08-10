@@ -1,7 +1,12 @@
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CodeGenerator {
+
+    // in the most literal sense
+    private static List<String> whitelist = new ArrayList<>();
+    private static List<String> blacklist = new ArrayList<>();
     
     public static String frameToCode(Frame frame) {
         StringBuilder sb = new StringBuilder();
@@ -17,8 +22,10 @@ public class CodeGenerator {
 
     public static void writeIno(List<Frame> list, int delay) {
         StringBuilder sb = new StringBuilder();
-        sb.append("#include <LiquidCrystal.h\n");
-        sb.append("LiquidCrystal lcd(7, 8, 9, 10, 11, 12)");
+        sb.append("#include <LiquidCrystal.h>\n");
+        sb.append("LiquidCrystal lcd(7, 8, 9, 10, 11, 12);\n");
+        sb.append("const byte WHITE[8] PROGMEM = {0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,};\n");
+        sb.append("const byte BLACK[8] PROGMEM = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,};\n");
         for (Frame frame : list) {
             sb.append(frameToCode(frame));
         }
@@ -35,12 +42,14 @@ public class CodeGenerator {
                 sb.append("createCustomCharacter(");
                 sb.append(j);
                 sb.append(", ");
-                sb.append(scope[j]);
+                if (whitelist.contains(scope[j]))
+                    sb.append("WHITE");
+                else if (blacklist.contains(scope[j]))
+                    sb.append("BLACK");
+                else
+                    sb.append(scope[j]);
                 sb.append(");\n");
             }
-            sb.append("delay(");
-            sb.append(delay/2);
-            sb.append(");\n");
             int anotherIndex = 0;
             for (int k = 0; k < 2; k++) {
                 for (int l = 0; l < 4; l++) {
@@ -56,7 +65,7 @@ public class CodeGenerator {
                 }
             }
             sb.append("delay(");
-            sb.append(delay/2);
+            sb.append(delay);
             sb.append(");\n");
         }
         sb.append("}\n");
@@ -74,7 +83,7 @@ public class CodeGenerator {
         try (PrintWriter out = new PrintWriter("generated.ino")) {
             out.print(sb.toString());
         } catch (Exception e) {
-            // TODO: handle exception
+            e.printStackTrace();
         }
     }
 
@@ -92,6 +101,14 @@ public class CodeGenerator {
     }
 
     private static String characterToCode(CustomCharacter character, String name) {
+        if (character.is(CustomCharacter.WHITE)) {
+            whitelist.add(name);
+            return "";
+        }
+        else if (character.is(CustomCharacter.BLACK)) {
+            blacklist.add(name);
+            return "";
+        }
         StringBuilder sb = new StringBuilder();
         sb.append("const byte ");
         sb.append(name);

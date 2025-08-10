@@ -4,4 +4,5 @@
     "java.project.referencedLibraries": [
         "lib/**/*.jar"
     ],
+    "C_Cpp.errorSquiggles": "disabled",
 }
