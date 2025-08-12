@@ -30,4 +30,8 @@ public class CustomCharacter {
         return Arrays.equals(character, getPixels());
     }
 
+    public boolean is(CustomCharacter character) {
+        return Arrays.equals(character.getPixels(), getPixels());
+    }
+
 }

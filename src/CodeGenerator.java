@@ -20,7 +20,7 @@ public class CodeGenerator {
         return sb.toString();
     }
 
-    public static void writeIno(List<Frame> list, int delay) {
+    public static void writeIno(List<Frame> list, double delay) {
         StringBuilder sb = new StringBuilder();
         sb.append("#include <LiquidCrystal.h>\n");
         sb.append("LiquidCrystal lcd(7, 8, 9, 10, 11, 12);\n");
@@ -33,22 +33,22 @@ public class CodeGenerator {
         sb.append("\nvoid loop()\n{\n");
         for (int i = 0; i < list.size(); i++) {
             String[] scope = getCharacterNamesFromFrame(list.get(i));
+            CustomCharacter[] charScope = getUnwrappedCharsFromFrame(list.get(i));
+            int setIfLastCharacterIsTheSame = -1;
             for (int j = 0; j < 8; j++) {
-                // sb.append("lcd.createChar(");
-                // sb.append(j);
-                // sb.append(", ");
-                // sb.append(scope[j]);
-                // sb.append(");\n");
-                sb.append("createCustomCharacter(");
-                sb.append(j);
-                sb.append(", ");
-                if (whitelist.contains(scope[j]))
-                    sb.append("WHITE");
-                else if (blacklist.contains(scope[j]))
-                    sb.append("BLACK");
-                else
-                    sb.append(scope[j]);
-                sb.append(");\n");
+                if (!(j > 0 && isCharacterInScope(charScope, j)))
+                {
+                    sb.append("createCustomCharacter(");
+                    sb.append(j);
+                    sb.append(", ");
+                    if (charScope[j].is(CustomCharacter.WHITE))
+                        sb.append("WHITE");
+                    else if (charScope[j].is(CustomCharacter.BLACK))
+                        sb.append("BLACK");
+                    else
+                        sb.append(scope[j]);
+                    sb.append(");\n");
+                }
             }
             int anotherIndex = 0;
             for (int k = 0; k < 2; k++) {
@@ -59,7 +59,11 @@ public class CodeGenerator {
                     sb.append(k);
                     sb.append(");\n");
                     sb.append("lcd.write((byte)");
-                    sb.append(anotherIndex);
+                    if (anotherIndex > 0 && getLastSameCharacter(charScope, anotherIndex) != -1) {
+                        setIfLastCharacterIsTheSame = getLastSameCharacter(charScope, anotherIndex);
+                        sb.append(setIfLastCharacterIsTheSame);
+                    } else
+                        sb.append(anotherIndex);
                     sb.append(");\n");
                     anotherIndex++;
                 }
@@ -98,6 +102,35 @@ public class CodeGenerator {
             }
         }
         return output;
+    }
+
+    private static CustomCharacter[] getUnwrappedCharsFromFrame(Frame frame) {
+        CustomCharacter[][] chars = frame.getFrameData();
+        CustomCharacter[] output = new CustomCharacter[8];
+        int i = 0;
+        for (int y = 0; y < chars.length; y++) {
+            for (int x = 0; x < chars[0].length; x++) {
+                output[i] = chars[y][x];
+                i++;
+            }
+        }
+        return output;
+    }
+
+    private static boolean isCharacterInScope(CustomCharacter[] scope, int index) {
+        for (int i = index; i >= 0; i--) {
+            if (i != index && scope[index].is(scope[i]))
+                return true;
+        }
+        return false;
+    }
+
+    private static int getLastSameCharacter(CustomCharacter[] scope, int index) {
+        for (int i = 0; i < index; i++) {
+            if (scope[index].is(scope[i]))
+                return i;
+        }
+        return -1;
     }
 
     private static String characterToCode(CustomCharacter character, String name) {

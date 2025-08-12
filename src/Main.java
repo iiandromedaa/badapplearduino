@@ -20,10 +20,11 @@ public class Main {
         }
         ImageProcessor ip = new ImageProcessor();
         List<Frame> coolList = new ArrayList<>();
-        for (int i = 0; i < 630; i += 6) {
+        int skip = 4;
+        for (int i = 0; i < 500; i += skip) {
             coolList.add(imageToFrame(i+1, ip));
         }
-        CodeGenerator.writeIno(coolList, 150);
+        CodeGenerator.writeIno(coolList, 33.33 * skip);
     }
 
     /**
