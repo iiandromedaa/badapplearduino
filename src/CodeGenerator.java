@@ -3,7 +3,7 @@ import java.util.List;
 
 public class CodeGenerator {
 
-    public static void writeIno(List<Frame> list, double delay) {
+    public void writeIno(List<Frame> list, double delay) {
         StringBuilder sb = new StringBuilder();
         sb.append("#include <LiquidCrystal.h>\n");
         sb.append("LiquidCrystal lcd(7, 8, 9, 10, 11, 12);\n");
@@ -74,7 +74,7 @@ public class CodeGenerator {
         }
     }
 
-    private static String[] getCharacterNamesFromFrame(Frame frame) {
+    private String[] getCharacterNamesFromFrame(Frame frame) {
         CustomCharacter[][] chars = frame.getFrameData();
         String[] output = new String[8];
         int i = 0;
@@ -87,7 +87,7 @@ public class CodeGenerator {
         return output;
     }
 
-    private static boolean isCharacterInScope(CustomCharacter[] scope, int index) {
+    private boolean isCharacterInScope(CustomCharacter[] scope, int index) {
         for (int i = index; i >= 0; i--) {
             if (i != index && scope[index].is(scope[i]))
                 return true;
@@ -95,7 +95,7 @@ public class CodeGenerator {
         return false;
     }
 
-    private static int getLastSameCharacter(CustomCharacter[] scope, int index) {
+    private int getLastSameCharacter(CustomCharacter[] scope, int index) {
         for (int i = 0; i < index; i++) {
             if (scope[index].is(scope[i]))
                 return i;
