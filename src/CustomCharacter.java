@@ -2,8 +2,12 @@ import java.util.Arrays;
 
 public class CustomCharacter {
 
-    public static byte[] BLACK = {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00};
-    public static byte[] WHITE = {0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f};
+    public static CustomCharacter BLACK = new CustomCharacter(
+        new byte[] {0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00});
+
+    public static CustomCharacter WHITE = new CustomCharacter(
+        new byte[] {0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f,0x1f});
+        
     private final byte[] pixels;
     
     public CustomCharacter(byte[] data) {
@@ -12,6 +16,16 @@ public class CustomCharacter {
 
     public byte[] getPixels() {
         return pixels;
+    }
+
+    public String toCode(String name) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("const byte ");
+        sb.append(name);
+        sb.append("[8] PROGMEM = {");
+        sb.append(toString());
+        sb.append("};");
+        return sb.toString();
     }
 
     @Override
@@ -26,12 +40,8 @@ public class CustomCharacter {
         return sb.toString();
     }
 
-    public boolean is(byte[] character) {
-        return Arrays.equals(character, getPixels());
-    }
-
     public boolean is(CustomCharacter character) {
-        return Arrays.equals(character.getPixels(), getPixels());
+        return Arrays.equals(character.getPixels(), pixels);
     }
 
 }

@@ -12,6 +12,7 @@ public class ImageProcessor {
 
     // ngl i just kinda found the math for this method and plugged it in
     // which yes is not great practice but it did happen to work perfectly
+    // still no ai though, fuck that shit, death to all vibe coders
     public BufferedImage thresholdImage(BufferedImage original, int threshold) {
         BufferedImage output = new BufferedImage(
             original.getWidth(), original.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
