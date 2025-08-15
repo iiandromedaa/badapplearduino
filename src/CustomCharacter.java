@@ -19,20 +19,14 @@ public class CustomCharacter {
     }
 
     public String toCode(String name) {
+        if (is(BLACK) || is(WHITE))
+            return "";
         StringBuilder sb = new StringBuilder();
         sb.append("const byte ");
         sb.append(name);
-        sb.append("[8] PROGMEM = ");
-        if (is(BLACK))
-            sb.append("BLACK");
-        else if (is(WHITE))
-            sb.append("WHITE");
-        else {
-            sb.append("{");
-            sb.append(toString());
-            sb.append("}");
-        }
-        sb.append(";");
+        sb.append("[8] PROGMEM = {");
+        sb.append(toString());
+        sb.append("};");
         return sb.toString();
     }
 
