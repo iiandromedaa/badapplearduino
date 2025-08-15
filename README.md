@@ -6,4 +6,4 @@ get that here https://archive.org/details/bad_apple_is.7z and extract into a fol
 
 the program will look for badapplesrc/image_sequence/ in the root of the repository
 
-
+![](image.png)
