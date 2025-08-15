@@ -22,9 +22,17 @@ public class CustomCharacter {
         StringBuilder sb = new StringBuilder();
         sb.append("const byte ");
         sb.append(name);
-        sb.append("[8] PROGMEM = {");
-        sb.append(toString());
-        sb.append("};");
+        sb.append("[8] PROGMEM = ");
+        if (is(BLACK))
+            sb.append("BLACK");
+        else if (is(WHITE))
+            sb.append("WHITE");
+        else {
+            sb.append("{");
+            sb.append(toString());
+            sb.append("}");
+        }
+        sb.append(";");
         return sb.toString();
     }
 
